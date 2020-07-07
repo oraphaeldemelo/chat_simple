@@ -30,23 +30,13 @@ const Chat = ({ location }) => {
         setRoom(room);
         setBot(bot);        
 
-        if(bot === 'true'){
-            axios.post(`${ENDPOINT}/bot/greetings`, {
-                username: name,
-                room: room
-            })
-            .then(async (res) => {
-                const response = {user: 'Bot', text: res.data};
-                
-               await setMessages([...messages, response]);
-            });
-        } else {
-            socket.emit('join', { name, room }, (error) => {
-                if(error){
-                    alert(error);
-                }
-            });
-        }
+      
+        socket.emit('join', { name, room, bot }, (error) => {
+            if(error){
+                alert(error);
+            }
+        });
+        
         
     }, [ENDPOINT, location.search]);
 
@@ -64,26 +54,14 @@ const Chat = ({ location }) => {
 
         if(message){
             if(bot === 'true'){
-                const userMessage = {user: name.trim().toLowerCase(), text: message};
-                await setMessages([...messages, userMessage])
+                setMessages([...messages, {user: name.trim().toLowerCase(), text: message}])
                 setMessage('');
-                console.log(messages);
-                
-                axios.post(`${ENDPOINT}/bot/sendmessage/`, {
-                    username: name,
-                    room: room,
-                    message: message
-                })
-                .then((res) => {
-                    const response = res.data;
-                    
-                    //setMessages([...messages, response]);
-                    console.log(messages);
+                socket.emit('sendMessageBot', message, room);
 
-                })       
-            } else {
-                socket.emit('sendMessage', message, () => setMessage(''));
-            }
+            } 
+            socket.emit('sendMessage', message, () => setMessage(''));
+
+            
         }
     }
 
