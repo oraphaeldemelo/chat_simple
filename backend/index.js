@@ -1,6 +1,8 @@
 const express = require('express');
 const socketio = require("socket.io");
 const http = require("http");
+const cors = require("cors");
+const bodyParser = require("body-parser");
 
 const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
 
@@ -9,8 +11,15 @@ const PORT = process.env.PORT || 5000;
 const router = require('./router');
 
 const app = express();
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json());
+app.use(cors());
+
 const server = http.createServer(app);
 const io = socketio(server);
+
+app.use(router); 
+
 
 io.on('connect', (socket) => {
     socket.on('join', ({ name, room }, callback) => {
@@ -48,8 +57,6 @@ io.on('connect', (socket) => {
     })
     
 })
-
-app.use(router); 
 
 server.listen(PORT, () => {
     console.log(`Server está rodando na porta ${PORT}`);

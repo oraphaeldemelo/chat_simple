@@ -69,3 +69,8 @@ html, body {
   button:focus {
     outline: 0;
   }
+
+  .attending{
+    margin-top: 15px;
+    background-color:white;
+  }
