@@ -1,4 +1,4 @@
-##Chat Simple
+## Chat Simple (Realtime)
 
 This chat is created for integrate another chat page or a chatbot.
 
